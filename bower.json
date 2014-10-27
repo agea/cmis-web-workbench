@@ -1,0 +1,25 @@
+{
+  "name": "cmis-web-workbench",
+  "version": "0.0.1",
+  "authors": [
+    "Andrea Agili <agea@drwolf.it>"
+  ],
+  "moduleType": [
+    "es6"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "app/bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angularjs": "~1.3.0",
+    "cmis": "~0.1.7",
+    "bootstrap": "~3.2.0",
+    "jquery-jsonview": "~1.2.0"
+  }
+}
