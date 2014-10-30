@@ -1,11 +1,10 @@
-//maxItems, skipCount, orderBy, renditionFilter, includeAllowableActions, includeRelationships, succinct, token
 workbench.controller('QueryController', [
   '$scope', 'cmisSession',
   function($scope, cmisSession) {
 
     $scope.query="";
     $scope.searchAllVersions = false;
-    $scope.options = {succinct:true};
+    $scope.options = {succinct:true,maxItems:100};
 
     $scope.runQuery = function(){
       $('#json').html('');
