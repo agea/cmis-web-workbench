@@ -10,6 +10,7 @@ module.exports = function(grunt) {
         cssDest: 'build/bower.css',
         mainFiles: {
           'cmis': 'lib/cmis.js',
+          'jsonview': ['dist/jquery.jsonview.js', 'jquery.jsonview.css'],
         },
         bowerOptions: {
           relative: false
@@ -18,14 +19,14 @@ module.exports = function(grunt) {
     },
     concat:{
       dist:{
-        src:['js/*'],
+        src:['js/*','js/services/*', 'js/controllers/*'],
         dest:'build/workbench.js'
       }
     },
     cssmin: {
       combine: {
         files: {
-          'bower.min.css': 'build/bower.css'
+          'bower.min.css': ['build/bower.css','app/bower_components/jquery-jsonview/dist/jquery.jsonview.css']
         }
       }
     },

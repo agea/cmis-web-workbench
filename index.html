@@ -1,12 +1,104 @@
 <html>
-  <head>
-    <script src="bower.min.js"></script>
-    <script src="build/workbench.js"></script>
-    <link href="bower.min.css" rel='stylesheet' type='text/css'></link>
-  </head>
-  <body ng-app>
-    {{1}}
-    <div class="container">
+
+<head>
+  <script src="bower.min.js"></script>
+  <script src="build/workbench.js"></script>
+  <link href="bower.min.css" rel='stylesheet' type='text/css'></link>
+</head>
+
+<body ng-app="workbench">
+
+  <div class="container" ng-controller="MainController">
+    <div class="row">
+      <div class="col-md-12">
+        <ul id="myTab" class="nav nav-pills" role="tablist">
+          <li class="active">
+            <a href="#query" role="tab" data-toggle="tab">Query</a>
+          </li>
+          <li>
+            <a href="#browse" role="tab" data-toggle="tab">Browse</a>
+          </li>
+          <li>
+            <a href="#info" role="tab" data-toggle="tab">Info</a>
+          </li>
+        </ul>
+        <hr>
+        <div class="tab-content">
+          <div class="tab-pane active" id="query" ng-controller="QueryController">
+            <form>
+              <div class="row">
+                <div class="col-md-12">
+                  <textarea ng-model="query" class="form-control" rows="{{query.split('\n').length+1}}"></textarea>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm-3">
+                  <label for="searchAllVersions">Search all versions</label>
+                  <input class="form-control" id="searchAllVersions" type="checkbox" ng-model="searchAllVersions">
+                </div>
+                <div class="col-sm-3">
+                  <label for="skipCount">Skip Count</label>
+                  <input id="skipCount" type="number" min="0" ng-model="options.skipCount" class="form-control">
+                </div>
+                <div class="col-sm-3">
+                  <label for="maxItems">Max Items</label>
+                  <input id="maxItems" type="number" min="0" ng-model="options.maxItems" class="form-control">
+                </div>
+                <div class="col-sm-3">
+                  <label for="orderBy">Order By</label>
+                  <input id="orderBy" type="text" ng-model="options.orderBy" class="form-control">
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm-3">
+                  <label for="renditionFilter">Rendition filter</label>
+                  <input class="form-control" id="renditionFilter" type="text" ng-model="renditionFilter">
+                </div>
+                <div class="col-sm-3">
+                  <label for="includeAllowableActions">Include Allowable Actions</label>
+                  <input id="includeAllowableActions" type="checkbox" ng-model="options.includeAllowableActions" class="form-control">
+                </div>
+                <div class="col-sm-3">
+                  <label for="includeRelationships">Include Relationships</label>
+                  <select id="includeRelationships" ng-model="options.includeRelationships" class="form-control">
+                    <option selected value=""></option>
+                    <option selected value="source">Source</option>
+                    <option selected value="target">Target</option>
+                    <option selected value="both">Both</option>
+                  </select>
+                </div>
+                <div class="col-sm-3">
+                  <label for="succinct">Succinct</label>
+                  <input id="succinct" type="checkbox" ng-model="options.succinct" class="form-control">
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-12">
+                  <button class="btn btn-primary btn-block" ng-click="runQuery()">Run Query</button>
+                </div>
+              </div>
+            </form>
+          </div>
+
+          <div class="tab-pane" id="browse">
+            browse
+          </div>
+          <div class="tab-pane" id="info">
+            info
+          </div>
+        </div>
+
+      </div>
     </div>
-  </body>
+    <div class="row">
+      <div class="col-md-12" class="well">
+        <hr>
+        <div class="well">
+          <div id="json"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
 </html>
