@@ -40,6 +40,17 @@ module.exports = function(grunt) {
           'bower.min.js': 'build/bower.js',
         }
       }
+    },
+    inline: {
+        dist: {
+            options:{
+                tag: '',
+                cssmin:true,
+                uglify:true
+            },
+            src: ['index.html'],
+            dest: ['dist/workbench.html']
+        }
     }
   });
 
@@ -51,6 +62,10 @@ grunt.registerTask('buildbower', [
 
 grunt.registerTask('buildwb', [
   'concat:dist'
+]);
+
+grunt.registerTask('buildinline', [
+  'inline:dist'
 ]);
 
 };
