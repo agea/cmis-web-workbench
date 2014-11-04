@@ -31,13 +31,13 @@ var wbconfig=wbconfig||{url:"/alfresco/api/-default-/public/cmis/versions/1.1/br
 workbench.factory("cmisSession",["$q",function(e){var o=e.defer(),n=cmis.createSession(wbconfig.url);return n.setGlobalHandlers(function(e){$("#json").JSONView(e.text)},function(e){$("#json").JSONView(e)}),n.loadRepositories().ok(function(){o.resolve(n)}),o.promise}]);
 </script>
   <script>
-workbench.controller("MainController",["$scope","cmisSession",function(o,n){n.then(function(o){$("#json").JSONView(o.repositories)})}]);
+workbench.controller("MainController",["$scope","cmisSession",function(n,o){n.options={succinct:!0,maxItems:100,skipCount:0},n.prepare=function(){$("#json").html("")},o.then(function(n){$("#json").JSONView(n.repositories)})}]);
 </script>
   <script>
-workbench.controller("QueryController",["$scope","cmisSession",function(o,n){o.query="",o.searchAllVersions=!1,o.options={succinct:!0,maxItems:100},o.runQuery=function(){$("#json").html(""),n.then(function(n){n.query(o.query,o.searchAllVersions,o.options).ok(wbconfig.ok)})}}]);
+workbench.controller("QueryController",["$scope","cmisSession",function(e,n){e.query="",e.searchAllVersions=!1,e.canSearchAllVersions=!1,n.then(function(n){e.canSearchAllVersions=n.defaultRepository.capabilities.capabilityAllVersionsSearchable}),e.runQuery=function(){e.prepare(),n.then(function(n){n.query(e.query,e.searchAllVersions,e.options).ok(wbconfig.ok)})}}]);
 </script>
   <script>
-workbench.controller("InfoController",["$scope","cmisSession",function(n,o){n.typeID=null,n.includePropertyDefinitions=!1,n.options={succinct:!0,maxItems:100},n.getTypeChildren=function(){$("#json").html(""),o.then(function(o){o.getTypeDescendants(n.typeID,0,n.includePropertyDefinitions,n.options).ok(wbconfig.ok)})}}]);
+workbench.controller("InfoController",["$scope","cmisSession",function(n,e){n.getRepositoryInfo=function(){n.prepare(),e.then(function(e){e.getRepositoryInfo(n.options).ok(wbconfig.ok)})},n.getContentChanges=function(){n.prepare(),e.then(function(e){e.getContentChanges(n.changeLogToken,n.includeProperties,n.includePolicyIds,n.includeACL,n.options).ok(wbconfig.ok)})},n.getCheckedOutDocs=function(){n.prepare(),e.then(function(e){e.getCheckedOutDocs(n.objectID,n.options).ok(wbconfig.ok)})},n.getTypeChildren=function(){n.prepare(),e.then(function(e){e.getTypeChildren(n.typeID,n.includePropertyDefinitions,n.options).ok(wbconfig.ok)})},n.getTypeDefinition=function(){n.prepare(),e.then(function(e){e.getTypeDefinition(n.typeID,n.options).ok(wbconfig.ok)})},n.getTypeDescendants=function(){n.prepare(),e.then(function(e){e.getTypeDescendants(n.typeID,n.depth||0,n.includePropertyDefinitions,n.options).ok(wbconfig.ok)})}}]);
 </script>
   <style>
 @charset "UTF-8";.jsonview{font-family:monospace;font-size:1.1em;white-space:pre-wrap}.jsonview .prop{font-weight:700}.jsonview .null{color:red}.jsonview .bool{color:#00f}.jsonview .num{color:#00f}.jsonview .string{color:green;white-space:pre-wrap}.jsonview .string.multiline{display:inline-block;vertical-align:text-top}.jsonview .collapser{position:absolute;left:-1em;cursor:pointer}.jsonview .collapsible{transition:height 1.2s;transition:width 1.2s}.jsonview .collapsible.collapsed{height:.8em;width:1em;display:inline-block;overflow:hidden;margin:0}.jsonview .collapsible.collapsed:before{content:"…";width:1em;margin-left:.2em}.jsonview .collapser.collapsed{transform:rotate(0deg)}.jsonview .q{display:inline-block;width:0;color:transparent}.jsonview li{position:relative}.jsonview ul{list-style:none;margin:0 0 0 2em;padding:0}.jsonview h1{font-size:1.2em}
@@ -56,49 +56,59 @@ workbench.controller("InfoController",["$scope","cmisSession",function(n,o){n.ty
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
  */.btn-default,.btn-primary,.btn-success,.btn-info,.btn-warning,.btn-danger{text-shadow:0 -1px 0 rgba(0,0,0,.2);-webkit-box-shadow:inset 0 1px 0 rgba(255,255,255,.15),0 1px 1px rgba(0,0,0,.075);box-shadow:inset 0 1px 0 rgba(255,255,255,.15),0 1px 1px rgba(0,0,0,.075)}.btn-default:active,.btn-primary:active,.btn-success:active,.btn-info:active,.btn-warning:active,.btn-danger:active,.btn-default.active,.btn-primary.active,.btn-success.active,.btn-info.active,.btn-warning.active,.btn-danger.active{-webkit-box-shadow:inset 0 3px 5px rgba(0,0,0,.125);box-shadow:inset 0 3px 5px rgba(0,0,0,.125)}.btn:active,.btn.active{background-image:none}.btn-default{text-shadow:0 1px 0 #fff;background-image:-webkit-linear-gradient(top,#fff 0,#e0e0e0 100%);background-image:-o-linear-gradient(top,#fff 0,#e0e0e0 100%);background-image:-webkit-gradient(linear,left top,left bottom,from(#fff),to(#e0e0e0));background-image:linear-gradient(to bottom,#fff 0,#e0e0e0 100%);filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff', endColorstr='#ffe0e0e0', GradientType=0);filter:progid:DXImageTransform.Microsoft.gradient(enabled=false);background-repeat:repeat-x;border-color:#dbdbdb;border-color:#ccc}.btn-default:hover,.btn-default:focus{background-color:#e0e0e0;background-position:0 -15px}.btn-default:active,.btn-default.active{background-color:#e0e0e0;border-color:#dbdbdb}.btn-default:disabled,.btn-default[disabled]{background-color:#e0e0e0;background-image:none}.btn-primary{background-image:-webkit-linear-gradient(top,#428bca 0,#2d6ca2 100%);background-image:-o-linear-gradient(top,#428bca 0,#2d6ca2 100%);background-image:-webkit-gradient(linear,left top,left bottom,from(#428bca),to(#2d6ca2));background-image:linear-gradient(to bottom,#428bca 0,#2d6ca2 100%);filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff428bca', endColorstr='#ff2d6ca2', GradientType=0);filter:progid:DXImageTransform.Microsoft.gradient(enabled=false);background-repeat:repeat-x;border-color:#2b669a}.btn-primary:hover,.btn-primary:focus{background-color:#2d6ca2;background-position:0 -15px}.btn-primary:active,.btn-primary.active{background-color:#2d6ca2;border-color:#2b669a}.btn-primary:disabled,.btn-primary[disabled]{background-color:#2d6ca2;background-image:none}.btn-success{background-image:-webkit-linear-gradient(top,#5cb85c 0,#419641 100%);background-image:-o-linear-gradient(top,#5cb85c 0,#419641 100%);background-image:-webkit-gradient(linear,left top,left bottom,from(#5cb85c),to(#419641));background-image:linear-gradient(to bottom,#5cb85c 0,#419641 100%);filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff5cb85c', endColorstr='#ff419641', GradientType=0);filter:progid:DXImageTransform.Microsoft.gradient(enabled=false);background-repeat:repeat-x;border-color:#3e8f3e}.btn-success:hover,.btn-success:focus{background-color:#419641;background-position:0 -15px}.btn-success:active,.btn-success.active{background-color:#419641;border-color:#3e8f3e}.btn-success:disabled,.btn-success[disabled]{background-color:#419641;background-image:none}.btn-info{background-image:-webkit-linear-gradient(top,#5bc0de 0,#2aabd2 100%);background-image:-o-linear-gradient(top,#5bc0de 0,#2aabd2 100%);background-image:-webkit-gradient(linear,left top,left bottom,from(#5bc0de),to(#2aabd2));background-image:linear-gradient(to bottom,#5bc0de 0,#2aabd2 100%);filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff5bc0de', endColorstr='#ff2aabd2', GradientType=0);filter:progid:DXImageTransform.Microsoft.gradient(enabled=false);background-repeat:repeat-x;border-color:#28a4c9}.btn-info:hover,.btn-info:focus{background-color:#2aabd2;background-position:0 -15px}.btn-info:active,.btn-info.active{background-color:#2aabd2;border-color:#28a4c9}.btn-info:disabled,.btn-info[disabled]{background-color:#2aabd2;background-image:none}.btn-warning{background-image:-webkit-linear-gradient(top,#f0ad4e 0,#eb9316 100%);background-image:-o-linear-gradient(top,#f0ad4e 0,#eb9316 100%);background-image:-webkit-gradient(linear,left top,left bottom,from(#f0ad4e),to(#eb9316));background-image:linear-gradient(to bottom,#f0ad4e 0,#eb9316 100%);filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#fff0ad4e', endColorstr='#ffeb9316', GradientType=0);filter:progid:DXImageTransform.Microsoft.gradient(enabled=false);background-repeat:repeat-x;border-color:#e38d13}.btn-warning:hover,.btn-warning:focus{background-color:#eb9316;background-position:0 -15px}.btn-warning:active,.btn-warning.active{background-color:#eb9316;border-color:#e38d13}.btn-warning:disabled,.btn-warning[disabled]{background-color:#eb9316;background-image:none}.btn-danger{background-image:-webkit-linear-gradient(top,#d9534f 0,#c12e2a 100%);background-image:-o-linear-gradient(top,#d9534f 0,#c12e2a 100%);background-image:-webkit-gradient(linear,left top,left bottom,from(#d9534f),to(#c12e2a));background-image:linear-gradient(to bottom,#d9534f 0,#c12e2a 100%);filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffd9534f', endColorstr='#ffc12e2a', GradientType=0);filter:progid:DXImageTransform.Microsoft.gradient(enabled=false);background-repeat:repeat-x;border-color:#b92c28}.btn-danger:hover,.btn-danger:focus{background-color:#c12e2a;background-position:0 -15px}.btn-danger:active,.btn-danger.active{background-color:#c12e2a;border-color:#b92c28}.btn-danger:disabled,.btn-danger[disabled]{background-color:#c12e2a;background-image:none}.thumbnail,.img-thumbnail{-webkit-box-shadow:0 1px 2px rgba(0,0,0,.075);box-shadow:0 1px 2px rgba(0,0,0,.075)}.dropdown-menu>li>a:hover,.dropdown-menu>li>a:focus{background-color:#e8e8e8;background-image:-webkit-linear-gradient(top,#f5f5f5 0,#e8e8e8 100%);background-image:-o-linear-gradient(top,#f5f5f5 0,#e8e8e8 100%);background-image:-webkit-gradient(linear,left top,left bottom,from(#f5f5f5),to(#e8e8e8));background-image:linear-gradient(to bottom,#f5f5f5 0,#e8e8e8 100%);filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#fff5f5f5', endColorstr='#ffe8e8e8', GradientType=0);background-repeat:repeat-x}.dropdown-menu>.active>a,.dropdown-menu>.active>a:hover,.dropdown-menu>.active>a:focus{background-color:#357ebd;background-image:-webkit-linear-gradient(top,#428bca 0,#357ebd 100%);background-image:-o-linear-gradient(top,#428bca 0,#357ebd 100%);background-image:-webkit-gradient(linear,left top,left bottom,from(#428bca),to(#357ebd));background-image:linear-gradient(to bottom,#428bca 0,#357ebd 100%);filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff428bca', endColorstr='#ff357ebd', GradientType=0);background-repeat:repeat-x}.navbar-default{background-image:-webkit-linear-gradient(top,#fff 0,#f8f8f8 100%);background-image:-o-linear-gradient(top,#fff 0,#f8f8f8 100%);background-image:-webkit-gradient(linear,left top,left bottom,from(#fff),to(#f8f8f8));background-image:linear-gradient(to bottom,#fff 0,#f8f8f8 100%);filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff', endColorstr='#fff8f8f8', GradientType=0);filter:progid:DXImageTransform.Microsoft.gradient(enabled=false);background-repeat:repeat-x;border-radius:4px;-webkit-box-shadow:inset 0 1px 0 rgba(255,255,255,.15),0 1px 5px rgba(0,0,0,.075);box-shadow:inset 0 1px 0 rgba(255,255,255,.15),0 1px 5px rgba(0,0,0,.075)}.navbar-default .navbar-nav>.active>a{background-image:-webkit-linear-gradient(top,#ebebeb 0,#f3f3f3 100%);background-image:-o-linear-gradient(top,#ebebeb 0,#f3f3f3 100%);background-image:-webkit-gradient(linear,left top,left bottom,from(#ebebeb),to(#f3f3f3));background-image:linear-gradient(to bottom,#ebebeb 0,#f3f3f3 100%);filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffebebeb', endColorstr='#fff3f3f3', GradientType=0);background-repeat:repeat-x;-webkit-box-shadow:inset 0 3px 9px rgba(0,0,0,.075);box-shadow:inset 0 3px 9px rgba(0,0,0,.075)}.navbar-brand,.navbar-nav>li>a{text-shadow:0 1px 0 rgba(255,255,255,.25)}.navbar-inverse{background-image:-webkit-linear-gradient(top,#3c3c3c 0,#222 100%);background-image:-o-linear-gradient(top,#3c3c3c 0,#222 100%);background-image:-webkit-gradient(linear,left top,left bottom,from(#3c3c3c),to(#222));background-image:linear-gradient(to bottom,#3c3c3c 0,#222 100%);filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff3c3c3c', endColorstr='#ff222222', GradientType=0);filter:progid:DXImageTransform.Microsoft.gradient(enabled=false);background-repeat:repeat-x}.navbar-inverse .navbar-nav>.active>a{background-image:-webkit-linear-gradient(top,#222 0,#282828 100%);background-image:-o-linear-gradient(top,#222 0,#282828 100%);background-image:-webkit-gradient(linear,left top,left bottom,from(#222),to(#282828));background-image:linear-gradient(to bottom,#222 0,#282828 100%);filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff222222', endColorstr='#ff282828', GradientType=0);background-repeat:repeat-x;-webkit-box-shadow:inset 0 3px 9px rgba(0,0,0,.25);box-shadow:inset 0 3px 9px rgba(0,0,0,.25)}.navbar-inverse .navbar-brand,.navbar-inverse .navbar-nav>li>a{text-shadow:0 -1px 0 rgba(0,0,0,.25)}.navbar-static-top,.navbar-fixed-top,.navbar-fixed-bottom{border-radius:0}.alert{text-shadow:0 1px 0 rgba(255,255,255,.2);-webkit-box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 1px 2px rgba(0,0,0,.05);box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 1px 2px rgba(0,0,0,.05)}.alert-success{background-image:-webkit-linear-gradient(top,#dff0d8 0,#c8e5bc 100%);background-image:-o-linear-gradient(top,#dff0d8 0,#c8e5bc 100%);background-image:-webkit-gradient(linear,left top,left bottom,from(#dff0d8),to(#c8e5bc));background-image:linear-gradient(to bottom,#dff0d8 0,#c8e5bc 100%);filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffdff0d8', endColorstr='#ffc8e5bc', GradientType=0);background-repeat:repeat-x;border-color:#b2dba1}.alert-info{background-image:-webkit-linear-gradient(top,#d9edf7 0,#b9def0 100%);background-image:-o-linear-gradient(top,#d9edf7 0,#b9def0 100%);background-image:-webkit-gradient(linear,left top,left bottom,from(#d9edf7),to(#b9def0));background-image:linear-gradient(to bottom,#d9edf7 0,#b9def0 100%);filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffd9edf7', endColorstr='#ffb9def0', GradientType=0);background-repeat:repeat-x;border-color:#9acfea}.alert-warning{background-image:-webkit-linear-gradient(top,#fcf8e3 0,#f8efc0 100%);background-image:-o-linear-gradient(top,#fcf8e3 0,#f8efc0 100%);background-image:-webkit-gradient(linear,left top,left bottom,from(#fcf8e3),to(#f8efc0));background-image:linear-gradient(to bottom,#fcf8e3 0,#f8efc0 100%);filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#fffcf8e3', endColorstr='#fff8efc0', GradientType=0);background-repeat:repeat-x;border-color:#f5e79e}.alert-danger{background-image:-webkit-linear-gradient(top,#f2dede 0,#e7c3c3 100%);background-image:-o-linear-gradient(top,#f2dede 0,#e7c3c3 100%);background-image:-webkit-gradient(linear,left top,left bottom,from(#f2dede),to(#e7c3c3));background-image:linear-gradient(to bottom,#f2dede 0,#e7c3c3 100%);filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#fff2dede', endColorstr='#ffe7c3c3', GradientType=0);background-repeat:repeat-x;border-color:#dca7a7}.progress{background-image:-webkit-linear-gradient(top,#ebebeb 0,#f5f5f5 100%);background-image:-o-linear-gradient(top,#ebebeb 0,#f5f5f5 100%);background-image:-webkit-gradient(linear,left top,left bottom,from(#ebebeb),to(#f5f5f5));background-image:linear-gradient(to bottom,#ebebeb 0,#f5f5f5 100%);filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffebebeb', endColorstr='#fff5f5f5', GradientType=0);background-repeat:repeat-x}.progress-bar{background-image:-webkit-linear-gradient(top,#428bca 0,#3071a9 100%);background-image:-o-linear-gradient(top,#428bca 0,#3071a9 100%);background-image:-webkit-gradient(linear,left top,left bottom,from(#428bca),to(#3071a9));background-image:linear-gradient(to bottom,#428bca 0,#3071a9 100%);filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff428bca', endColorstr='#ff3071a9', GradientType=0);background-repeat:repeat-x}.progress-bar-success{background-image:-webkit-linear-gradient(top,#5cb85c 0,#449d44 100%);background-image:-o-linear-gradient(top,#5cb85c 0,#449d44 100%);background-image:-webkit-gradient(linear,left top,left bottom,from(#5cb85c),to(#449d44));background-image:linear-gradient(to bottom,#5cb85c 0,#449d44 100%);filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff5cb85c', endColorstr='#ff449d44', GradientType=0);background-repeat:repeat-x}.progress-bar-info{background-image:-webkit-linear-gradient(top,#5bc0de 0,#31b0d5 100%);background-image:-o-linear-gradient(top,#5bc0de 0,#31b0d5 100%);background-image:-webkit-gradient(linear,left top,left bottom,from(#5bc0de),to(#31b0d5));background-image:linear-gradient(to bottom,#5bc0de 0,#31b0d5 100%);filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff5bc0de', endColorstr='#ff31b0d5', GradientType=0);background-repeat:repeat-x}.progress-bar-warning{background-image:-webkit-linear-gradient(top,#f0ad4e 0,#ec971f 100%);background-image:-o-linear-gradient(top,#f0ad4e 0,#ec971f 100%);background-image:-webkit-gradient(linear,left top,left bottom,from(#f0ad4e),to(#ec971f));background-image:linear-gradient(to bottom,#f0ad4e 0,#ec971f 100%);filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#fff0ad4e', endColorstr='#ffec971f', GradientType=0);background-repeat:repeat-x}.progress-bar-danger{background-image:-webkit-linear-gradient(top,#d9534f 0,#c9302c 100%);background-image:-o-linear-gradient(top,#d9534f 0,#c9302c 100%);background-image:-webkit-gradient(linear,left top,left bottom,from(#d9534f),to(#c9302c));background-image:linear-gradient(to bottom,#d9534f 0,#c9302c 100%);filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffd9534f', endColorstr='#ffc9302c', GradientType=0);background-repeat:repeat-x}.progress-bar-striped{background-image:-webkit-linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent);background-image:-o-linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent);background-image:linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent)}.list-group{border-radius:4px;-webkit-box-shadow:0 1px 2px rgba(0,0,0,.075);box-shadow:0 1px 2px rgba(0,0,0,.075)}.list-group-item.active,.list-group-item.active:hover,.list-group-item.active:focus{text-shadow:0 -1px 0 #3071a9;background-image:-webkit-linear-gradient(top,#428bca 0,#3278b3 100%);background-image:-o-linear-gradient(top,#428bca 0,#3278b3 100%);background-image:-webkit-gradient(linear,left top,left bottom,from(#428bca),to(#3278b3));background-image:linear-gradient(to bottom,#428bca 0,#3278b3 100%);filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff428bca', endColorstr='#ff3278b3', GradientType=0);background-repeat:repeat-x;border-color:#3278b3}.panel{-webkit-box-shadow:0 1px 2px rgba(0,0,0,.05);box-shadow:0 1px 2px rgba(0,0,0,.05)}.panel-default>.panel-heading{background-image:-webkit-linear-gradient(top,#f5f5f5 0,#e8e8e8 100%);background-image:-o-linear-gradient(top,#f5f5f5 0,#e8e8e8 100%);background-image:-webkit-gradient(linear,left top,left bottom,from(#f5f5f5),to(#e8e8e8));background-image:linear-gradient(to bottom,#f5f5f5 0,#e8e8e8 100%);filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#fff5f5f5', endColorstr='#ffe8e8e8', GradientType=0);background-repeat:repeat-x}.panel-primary>.panel-heading{background-image:-webkit-linear-gradient(top,#428bca 0,#357ebd 100%);background-image:-o-linear-gradient(top,#428bca 0,#357ebd 100%);background-image:-webkit-gradient(linear,left top,left bottom,from(#428bca),to(#357ebd));background-image:linear-gradient(to bottom,#428bca 0,#357ebd 100%);filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff428bca', endColorstr='#ff357ebd', GradientType=0);background-repeat:repeat-x}.panel-success>.panel-heading{background-image:-webkit-linear-gradient(top,#dff0d8 0,#d0e9c6 100%);background-image:-o-linear-gradient(top,#dff0d8 0,#d0e9c6 100%);background-image:-webkit-gradient(linear,left top,left bottom,from(#dff0d8),to(#d0e9c6));background-image:linear-gradient(to bottom,#dff0d8 0,#d0e9c6 100%);filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffdff0d8', endColorstr='#ffd0e9c6', GradientType=0);background-repeat:repeat-x}.panel-info>.panel-heading{background-image:-webkit-linear-gradient(top,#d9edf7 0,#c4e3f3 100%);background-image:-o-linear-gradient(top,#d9edf7 0,#c4e3f3 100%);background-image:-webkit-gradient(linear,left top,left bottom,from(#d9edf7),to(#c4e3f3));background-image:linear-gradient(to bottom,#d9edf7 0,#c4e3f3 100%);filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffd9edf7', endColorstr='#ffc4e3f3', GradientType=0);background-repeat:repeat-x}.panel-warning>.panel-heading{background-image:-webkit-linear-gradient(top,#fcf8e3 0,#faf2cc 100%);background-image:-o-linear-gradient(top,#fcf8e3 0,#faf2cc 100%);background-image:-webkit-gradient(linear,left top,left bottom,from(#fcf8e3),to(#faf2cc));background-image:linear-gradient(to bottom,#fcf8e3 0,#faf2cc 100%);filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#fffcf8e3', endColorstr='#fffaf2cc', GradientType=0);background-repeat:repeat-x}.panel-danger>.panel-heading{background-image:-webkit-linear-gradient(top,#f2dede 0,#ebcccc 100%);background-image:-o-linear-gradient(top,#f2dede 0,#ebcccc 100%);background-image:-webkit-gradient(linear,left top,left bottom,from(#f2dede),to(#ebcccc));background-image:linear-gradient(to bottom,#f2dede 0,#ebcccc 100%);filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#fff2dede', endColorstr='#ffebcccc', GradientType=0);background-repeat:repeat-x}.well{background-image:-webkit-linear-gradient(top,#e8e8e8 0,#f5f5f5 100%);background-image:-o-linear-gradient(top,#e8e8e8 0,#f5f5f5 100%);background-image:-webkit-gradient(linear,left top,left bottom,from(#e8e8e8),to(#f5f5f5));background-image:linear-gradient(to bottom,#e8e8e8 0,#f5f5f5 100%);filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffe8e8e8', endColorstr='#fff5f5f5', GradientType=0);background-repeat:repeat-x;border-color:#dcdcdc;-webkit-box-shadow:inset 0 1px 3px rgba(0,0,0,.05),0 1px 0 rgba(255,255,255,.1);box-shadow:inset 0 1px 3px rgba(0,0,0,.05),0 1px 0 rgba(255,255,255,.1)}
 </style>
-
 </head>
 
-<body ng-app="workbench">
+<body ng-app="workbench" ng-controller="MainController">
 
-  <div class="container" ng-controller="MainController">
+
+  <nav class="navbar navbar-default">
+    <div class="container">
+
+      <div class="navbar-header">
+        <span class="navbar-brand">CMIS Web Workbench</span>
+      </div>
+      <ul class="nav navbar-nav" role="tablist">
+        <li class="active">
+          <a href="#query" role="tab" data-toggle="tab">Query</a>
+        </li>
+        <li>
+          <a href="#info" role="tab" data-toggle="tab">Info</a>
+        </li>
+      </ul>
+
+      <form class="navbar-form navbar-right">
+        <div class="form-group">
+          <label for="skipCount">Skip Count:</label>
+          <input class="form-control" id="skipCount" type="number" style="width:6em;margin-right: 1em;" min="0" ng-model="options.skipCount">
+        </div>
+        <div class="form-group">
+          <label for="maxItems">Max Items:</label>
+          <input class="form-control" id="maxItems" type="number" style="width:6em;margin-right: 1em;" min="0" ng-model="options.maxItems">
+        </div>
+        <div class="btn-group" data-toggle="buttons">
+          <label class="btn btn-primary active">
+            <input type="checkbox" ng-model="options.succinct">Succinct
+          </label>
+        </div>
+
+      </form>
+
+    </div>
+  </nav>
+
+
+  <div class="container">
     <div class="row">
       <div class="col-md-12">
-        <ul id="myTab" class="nav nav-pills" role="tablist">
-          <li class="active">
-            <a href="#query" role="tab" data-toggle="tab">Query</a>
-          </li>
-          <li>
-            <a href="#browse" role="tab" data-toggle="tab">Browse</a>
-          </li>
-          <li>
-            <a href="#info" role="tab" data-toggle="tab">Info</a>
-          </li>
-        </ul>
-        <hr>
         <div class="tab-content">
           <div class="tab-pane active" id="query" ng-controller="QueryController">
             <form>
-              <div class="row">
+              <div class="row form-group">
                 <div class="col-md-12">
                   <textarea ng-model="query" class="form-control" rows="{{query.split('\n').length+1}}"></textarea>
                 </div>
               </div>
-              <div class="row">
-                <div class="col-sm-4">
-                  <label for="succinct">Succinct</label>
-                  <input id="succinct" type="checkbox" ng-model="options.succinct" class="form-control">
-                </div>
-                <div class="col-sm-4">
-                  <label for="skipCount">Skip Count</label>
-                  <input id="skipCount" type="number" min="0" ng-model="options.skipCount" class="form-control">
-                </div>
-                <div class="col-sm-4">
-                  <label for="maxItems">Max Items</label>
-                  <input id="maxItems" type="number" min="0" ng-model="options.maxItems" class="form-control">
-                </div>
-              </div>
-              <div class="row">
+              <div class="row form-group">
                 <div class="col-sm-4">
                   <label for="includeAllowableActions">Include Allowable Actions</label>
                   <input id="includeAllowableActions" type="checkbox" ng-model="options.includeAllowableActions" class="form-control">
@@ -114,7 +124,7 @@ workbench.controller("InfoController",["$scope","cmisSession",function(n,o){n.ty
                 </div>
                 <div class="col-sm-4">
                   <label for="searchAllVersions">Search all versions</label>
-                  <input class="form-control" id="searchAllVersions" type="checkbox" ng-model="searchAllVersions">
+                  <input class="form-control" id="searchAllVersions" type="checkbox" ng-disabled="!canSearchAllVersions" ng-model="searchAllVersions">
                 </div>
               </div>
               <div class="row">
@@ -125,8 +135,84 @@ workbench.controller("InfoController",["$scope","cmisSession",function(n,o){n.ty
             </form>
           </div>
 
+          <div class="tab-pane" id="browse" ng-controller="InfoController">
+            soon
+          </div>
+
           <div class="tab-pane" id="info" ng-controller="InfoController">
-            <a class="btn btn-primary" ng-click="getTypeChildren()">Get Type Children</a>
+            <div class="row form-group">
+              <div class="col-sm-2">
+                <a class="btn btn-primary btn-block" ng-click="getRepositoryInfo()">Get Repository Info</a>
+              </div>
+            </div>
+            <div class="row form-group">
+              <div class="col-sm-2">
+                <a class="btn btn-primary btn-block" ng-click="getTypeDefinition()">Get Type Definition</a>
+              </div>
+              <div class="col-sm-2">
+                <input class="form-control" type="text" placeholder="Type ID" ng-model="typeID">
+              </div>
+            </div>
+            <div class="row form-group">
+              <div class="col-sm-2">
+                <a class="btn btn-primary btn-block" ng-click="getTypeChildren()">Get Type Children</a>
+              </div>
+              <div class="col-sm-2">
+                <input type="text" class="form-control" placeholder="Type ID" ng-model="typeID">
+              </div>
+              <div class="col-sm-3">
+                <label class="form-control">Include property definitions
+                  <input type="checkbox" ng-model="includePropertyDefinitions">
+                </label>
+              </div>
+            </div>
+            <div class="row form-group">
+              <div class="col-sm-2">
+                <a class="btn btn-primary btn-block" ng-click="getTypeDescendants()">Get Type Descendants</a>
+              </div>
+              <div class="col-sm-2">
+                <input type="text" class="form-control" placeholder="Type ID" ng-model="typeID">
+              </div>
+              <div class="col-sm-2">
+                <input type="number" min="0" class="form-control" placeholder="Depth" ng-model="depth">
+              </div>
+              <div class="col-sm-3">
+                <label class="form-control">Include property definitions
+                  <input type="checkbox" ng-model="includePropertyDefinitions">
+                </label>
+              </div>
+            </div>
+            <div class="row form-group">
+              <div class="col-sm-2">
+                <a class="btn btn-primary btn-block" ng-click="getCheckedOutDocs()">Get Checked Out Docs</a>
+              </div>
+              <div class="col-sm-2">
+                <input type="text" class="form-control" placeholder="Object ID" ng-model="objectID">
+              </div>
+            </div>
+            <div class="row form-group">
+              <div class="col-sm-2">
+                <a class="btn btn-primary btn-block" ng-click="getCheckedOutDocs()">Get Content Changes</a>
+              </div>
+              <div class="col-sm-2">
+                <input class="form-control" type="text" placeholder="ChangeLog Token" ng-model="changeLogToken">
+              </div>
+              <div class="col-sm-2">
+                <label class="form-control">Include properties
+                  <input type="checkbox" ng-model="includeProperties">
+                </label>
+              </div>
+              <div class="col-sm-2">
+                <label class="form-control">Include Policy IDs
+                  <input type="checkbox" ng-model="includePolicyIDs">
+                </label>
+              </div>
+              <div class="col-sm-2">
+                <label class="form-control">Include ACL
+                  <input type="checkbox" ng-model="includeACL">
+                </label>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -134,7 +220,6 @@ workbench.controller("InfoController",["$scope","cmisSession",function(n,o){n.ty
     </div>
     <div class="row">
       <div class="col-md-12" class="well">
-        <hr>
         <div class="well">
           <div id="json"></div>
         </div>

@@ -15,49 +15,59 @@
   <link href="app/bower_components/jquery-jsonview/dist/jquery.jsonview.css" rel='stylesheet' type='text/css'>
   <link href="app/bower_components/bootstrap/dist/css/bootstrap.min.css" rel='stylesheet' type='text/css'>
   <link href="app/bower_components/bootstrap/dist/css/bootstrap-theme.min.css" rel='stylesheet' type='text/css'>
-
 </head>
 
-<body ng-app="workbench">
+<body ng-app="workbench" ng-controller="MainController">
 
-  <div class="container" ng-controller="MainController">
+
+  <nav class="navbar navbar-default">
+    <div class="container">
+
+      <div class="navbar-header">
+        <span class="navbar-brand">CMIS Web Workbench</span>
+      </div>
+      <ul class="nav navbar-nav" role="tablist">
+        <li class="active">
+          <a href="#query" role="tab" data-toggle="tab">Query</a>
+        </li>
+        <li>
+          <a href="#info" role="tab" data-toggle="tab">Info</a>
+        </li>
+      </ul>
+
+      <form class="navbar-form navbar-right">
+        <div class="form-group">
+          <label for="skipCount">Skip Count:</label>
+          <input class="form-control" id="skipCount" type="number" style="width:6em;margin-right: 1em;" min="0" ng-model="options.skipCount">
+        </div>
+        <div class="form-group">
+          <label for="maxItems">Max Items:</label>
+          <input class="form-control" id="maxItems" type="number" style="width:6em;margin-right: 1em;" min="0" ng-model="options.maxItems">
+        </div>
+        <div class="btn-group" data-toggle="buttons">
+          <label class="btn btn-primary active">
+            <input type="checkbox" ng-model="options.succinct">Succinct
+          </label>
+        </div>
+
+      </form>
+
+    </div>
+  </nav>
+
+
+  <div class="container">
     <div class="row">
       <div class="col-md-12">
-        <ul id="myTab" class="nav nav-pills" role="tablist">
-          <li class="active">
-            <a href="#query" role="tab" data-toggle="tab">Query</a>
-          </li>
-          <li>
-            <a href="#browse" role="tab" data-toggle="tab">Browse</a>
-          </li>
-          <li>
-            <a href="#info" role="tab" data-toggle="tab">Info</a>
-          </li>
-        </ul>
-        <hr>
         <div class="tab-content">
           <div class="tab-pane active" id="query" ng-controller="QueryController">
             <form>
-              <div class="row">
+              <div class="row form-group">
                 <div class="col-md-12">
                   <textarea ng-model="query" class="form-control" rows="{{query.split('\n').length+1}}"></textarea>
                 </div>
               </div>
-              <div class="row">
-                <div class="col-sm-4">
-                  <label for="succinct">Succinct</label>
-                  <input id="succinct" type="checkbox" ng-model="options.succinct" class="form-control">
-                </div>
-                <div class="col-sm-4">
-                  <label for="skipCount">Skip Count</label>
-                  <input id="skipCount" type="number" min="0" ng-model="options.skipCount" class="form-control">
-                </div>
-                <div class="col-sm-4">
-                  <label for="maxItems">Max Items</label>
-                  <input id="maxItems" type="number" min="0" ng-model="options.maxItems" class="form-control">
-                </div>
-              </div>
-              <div class="row">
+              <div class="row form-group">
                 <div class="col-sm-4">
                   <label for="includeAllowableActions">Include Allowable Actions</label>
                   <input id="includeAllowableActions" type="checkbox" ng-model="options.includeAllowableActions" class="form-control">
@@ -73,7 +83,7 @@
                 </div>
                 <div class="col-sm-4">
                   <label for="searchAllVersions">Search all versions</label>
-                  <input class="form-control" id="searchAllVersions" type="checkbox" ng-model="searchAllVersions">
+                  <input class="form-control" id="searchAllVersions" type="checkbox" ng-disabled="!canSearchAllVersions" ng-model="searchAllVersions">
                 </div>
               </div>
               <div class="row">
@@ -84,8 +94,84 @@
             </form>
           </div>
 
+          <div class="tab-pane" id="browse" ng-controller="InfoController">
+            soon
+          </div>
+
           <div class="tab-pane" id="info" ng-controller="InfoController">
-            <a class="btn btn-primary" ng-click="getTypeChildren()">Get Type Children</a>
+            <div class="row form-group">
+              <div class="col-sm-2">
+                <a class="btn btn-primary btn-block" ng-click="getRepositoryInfo()">Get Repository Info</a>
+              </div>
+            </div>
+            <div class="row form-group">
+              <div class="col-sm-2">
+                <a class="btn btn-primary btn-block" ng-click="getTypeDefinition()">Get Type Definition</a>
+              </div>
+              <div class="col-sm-2">
+                <input class="form-control" type="text" placeholder="Type ID" ng-model="typeID">
+              </div>
+            </div>
+            <div class="row form-group">
+              <div class="col-sm-2">
+                <a class="btn btn-primary btn-block" ng-click="getTypeChildren()">Get Type Children</a>
+              </div>
+              <div class="col-sm-2">
+                <input type="text" class="form-control" placeholder="Type ID" ng-model="typeID">
+              </div>
+              <div class="col-sm-3">
+                <label class="form-control">Include property definitions
+                  <input type="checkbox" ng-model="includePropertyDefinitions">
+                </label>
+              </div>
+            </div>
+            <div class="row form-group">
+              <div class="col-sm-2">
+                <a class="btn btn-primary btn-block" ng-click="getTypeDescendants()">Get Type Descendants</a>
+              </div>
+              <div class="col-sm-2">
+                <input type="text" class="form-control" placeholder="Type ID" ng-model="typeID">
+              </div>
+              <div class="col-sm-2">
+                <input type="number" min="0" class="form-control" placeholder="Depth" ng-model="depth">
+              </div>
+              <div class="col-sm-3">
+                <label class="form-control">Include property definitions
+                  <input type="checkbox" ng-model="includePropertyDefinitions">
+                </label>
+              </div>
+            </div>
+            <div class="row form-group">
+              <div class="col-sm-2">
+                <a class="btn btn-primary btn-block" ng-click="getCheckedOutDocs()">Get Checked Out Docs</a>
+              </div>
+              <div class="col-sm-2">
+                <input type="text" class="form-control" placeholder="Object ID" ng-model="objectID">
+              </div>
+            </div>
+            <div class="row form-group">
+              <div class="col-sm-2">
+                <a class="btn btn-primary btn-block" ng-click="getCheckedOutDocs()">Get Content Changes</a>
+              </div>
+              <div class="col-sm-2">
+                <input class="form-control" type="text" placeholder="ChangeLog Token" ng-model="changeLogToken">
+              </div>
+              <div class="col-sm-2">
+                <label class="form-control">Include properties
+                  <input type="checkbox" ng-model="includeProperties">
+                </label>
+              </div>
+              <div class="col-sm-2">
+                <label class="form-control">Include Policy IDs
+                  <input type="checkbox" ng-model="includePolicyIDs">
+                </label>
+              </div>
+              <div class="col-sm-2">
+                <label class="form-control">Include ACL
+                  <input type="checkbox" ng-model="includeACL">
+                </label>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -93,7 +179,6 @@
     </div>
     <div class="row">
       <div class="col-md-12" class="well">
-        <hr>
         <div class="well">
           <div id="json"></div>
         </div>
