@@ -44,12 +44,11 @@
           <label for="maxItems">Max Items:</label>
           <input class="form-control" id="maxItems" type="number" style="width:6em;margin-right: 1em;" min="0" ng-model="options.maxItems">
         </div>
-        <div class="btn-group" data-toggle="buttons">
-          <label class="btn btn-primary active">
-            <input type="checkbox" ng-model="options.succinct">Succinct
+        <div class="form-group">
+          <label>Succinct
+            <input type="checkbox" ng-model="options.succinct">
           </label>
         </div>
-
       </form>
 
     </div>
@@ -69,21 +68,24 @@
               </div>
               <div class="row form-group">
                 <div class="col-sm-4">
-                  <label for="includeAllowableActions">Include Allowable Actions</label>
-                  <input id="includeAllowableActions" type="checkbox" ng-model="options.includeAllowableActions" class="form-control">
+                  <label class="form-control">Include Allowable Actions
+                    <input type="checkbox" ng-model="options.includeAllowableActions">
+                  </label>
                 </div>
                 <div class="col-sm-4">
-                  <label for="includeRelationships">Include Relationships</label>
-                  <select id="includeRelationships" ng-model="options.includeRelationships" class="form-control">
-                    <option selected value=""></option>
+                  <select class="form-control" id="includeRelationships" ng-model="options.includeRelationships">
+                    <option selected value="">Include Relationships:</option>
                     <option selected value="source">Source</option>
                     <option selected value="target">Target</option>
                     <option selected value="both">Both</option>
                   </select>
                 </div>
                 <div class="col-sm-4">
-                  <label for="searchAllVersions">Search all versions</label>
-                  <input class="form-control" id="searchAllVersions" type="checkbox" ng-disabled="!canSearchAllVersions" ng-model="searchAllVersions">
+                  <label class="form-control">Search all versions
+
+                    <span ng-if="!canSearchAllVersions">(not available)</span>
+                    <input type="checkbox" ng-if="canSearchAllVersions" ng-model="searchAllVersions">
+                  </label>
                 </div>
               </div>
               <div class="row">
@@ -151,7 +153,7 @@
             </div>
             <div class="row form-group">
               <div class="col-sm-2">
-                <a class="btn btn-primary btn-block" ng-click="getCheckedOutDocs()">Get Content Changes</a>
+                <a class="btn btn-primary btn-block" ng-click="getContentChanges()">Get Content Changes</a>
               </div>
               <div class="col-sm-2">
                 <input class="form-control" type="text" placeholder="ChangeLog Token" ng-model="changeLogToken">
