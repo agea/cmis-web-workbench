@@ -10,23 +10,23 @@ module.exports = function(grunt) {
         cssDest: 'build/bower.css',
         mainFiles: {
           'cmis': 'lib/cmis.js',
-          'jsonview': ['dist/jquery.jsonview.js', 'jquery.jsonview.css'],
+          'jsonview': ['dist/jquery.jsonview.js', 'jquery.jsonview.css']
         },
         bowerOptions: {
           relative: false
         }
       }
     },
-    concat:{
-      dist:{
-        src:['js/*','js/services/*', 'js/controllers/*'],
-        dest:'build/workbench.js'
+    concat: {
+      dist: {
+        src: ['js/*', 'js/services/*', 'js/controllers/*'],
+        dest: 'build/workbench.js'
       }
     },
     cssmin: {
       combine: {
         files: {
-          'bower.min.css': ['build/bower.css','app/bower_components/jquery-jsonview/dist/jquery.jsonview.css']
+          'bower.min.css': ['build/bower.css', 'app/bower_components/jquery-jsonview/dist/jquery.jsonview.css']
         }
       }
     },
@@ -37,35 +37,35 @@ module.exports = function(grunt) {
           compress: true
         },
         files: {
-          'bower.min.js': 'build/bower.js',
+          'bower.min.js': 'build/bower.js'
         }
       }
     },
     inline: {
-        dist: {
-            options:{
-                tag: '',
-                cssmin:true,
-                uglify:true
-            },
-            src: ['index.html'],
-            dest: ['dist/workbench.html']
-        }
+      dist: {
+        options: {
+          tag: '',
+          cssmin: true,
+          uglify: true
+        },
+        src: ['index.html'],
+        dest: ['dist/workbench.html']
+      }
     }
   });
 
-grunt.registerTask('buildbower', [
-  'bower_concat',
-  'uglify:bower',
-  'cssmin'
-]);
+  grunt.registerTask('buildbower', [
+    'bower_concat',
+    'uglify:bower',
+    'cssmin'
+  ]);
 
-grunt.registerTask('buildwb', [
-  'concat:dist'
-]);
+  grunt.registerTask('buildwb', [
+    'concat:dist'
+  ]);
 
-grunt.registerTask('buildinline', [
-  'inline:dist'
-]);
+  grunt.registerTask('buildinline', [
+    'inline:dist'
+  ]);
 
 };

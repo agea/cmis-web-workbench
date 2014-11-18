@@ -12,6 +12,7 @@
   <script src="js/controllers/MainController.js"></script>
   <script src="js/controllers/QueryController.js"></script>
   <script src="js/controllers/InfoController.js"></script>
+  <script src="js/controllers/BrowserController.js"></script>
   <link href="app/bower_components/jquery-jsonview/dist/jquery.jsonview.css" rel='stylesheet' type='text/css'>
   <link href="app/bower_components/bootstrap/dist/css/bootstrap.min.css" rel='stylesheet' type='text/css'>
   <link href="app/bower_components/bootstrap/dist/css/bootstrap-theme.min.css" rel='stylesheet' type='text/css'>
@@ -32,6 +33,9 @@
         </li>
         <li>
           <a href="#info" role="tab" data-toggle="tab">Info</a>
+        </li>
+        <li>
+          <a href="#browse" role="tab" data-toggle="tab">Browse</a>
         </li>
       </ul>
 
@@ -96,8 +100,101 @@
             </form>
           </div>
 
-          <div class="tab-pane" id="browse" ng-controller="InfoController">
-            soon
+          <div class="tab-pane" id="browse" ng-controller="BrowserController">
+            <div class="row form-group">
+              <div class="col-sm-6">
+                <div class="breadcrumb">{{prop(object,'cmis:path')}}</div>
+              </div>
+              <div class="col-sm-6">
+                <div class="input-group">
+                  <div class="input-group-btn">
+                    <a class="btn btn-primary" ng-click="goToParent()"> Parent </a>
+                    <a class="btn btn-primary" ng-click="getObject(object)">Object</a>
+                    <a class="btn btn-primary" ng-click="getChildren()">Children</a>
+                    <a class="btn btn-primary" ng-click="getFolderTree(object)">Folder Tree</a>
+                    <a class="btn btn-primary" ng-click="getDescendants(object)">Descendants</a>
+                  </div>
+                  <input type="number" class="form-control" ng-model="options.depth" placeholder="Depth">
+                </div>
+              </div>
+            </div>
+
+            <div class="row form-group">
+              <div class="col-sm-4">
+                <input type="text" ng-model="options.filter" class="form-control" placeholder="Filter">
+              </div>
+              <div class="col-sm-4">
+                <input type="text" ng-model="options.orderBy" class="form-control" placeholder="Order By">
+              </div>
+              <div class="col-sm-4">
+                <input type="text" ng-model="options.renditionFilter" class="form-control" placeholder="Rendition Filter">
+              </div>
+            </div>
+            <div class="row form-group">
+              <div class="col-sm-4">
+                <label class="form-control">Include Allowable Actions
+                  <input type="checkbox" ng-model="options.includeAllowableActions">
+                </label>
+              </div>
+              <div class="col-sm-4">
+                <select class="form-control" id="includeRelationships" ng-model="options.includeRelationships">
+                  <option selected value="">Include Relationships:</option>
+                  <option selected value="source">Source</option>
+                  <option selected value="target">Target</option>
+                  <option selected value="both">Both</option>
+                </select>
+              </div>
+              <div class="col-sm-4">
+                <label class="form-control">Include Path Segment
+                  <input type="checkbox" ng-model="options.includePathSegments">
+                </label>
+              </div>
+            </div>
+            <div class="row" ng-repeat="child in children.objects">
+              <div class="col-sm-6">
+                <div class="breadcrumb">{{prop(child.object,'cmis:name')}}</div>
+              </div>
+              <div class="col-sm-6">
+                <div class="btn-group form-group">
+                  <a class="btn btn-primary" ng-click="getObject(child.object)">Object</a>
+
+                  <a ng-show="{{prop(child.object,'cmis:baseTypeId')=='cmis:folder'}}" class="btn btn-primary" ng-click="goto(child.object)">
+                    Children
+                  </a>
+                  <a ng-show="{{prop(child.object,'cmis:baseTypeId')=='cmis:document'}}" target="_blank" href="{{contentURL(child.object)}}" class="btn btn-primary">
+                    Content
+                  </a>
+                  <a class="btn btn-primary" ng-show="prop(child.object,'cmis:baseTypeId')=='cmis:document' && prop(child.object,'cmis:versionSeriesCheckedOutId')==null" ng-click="checkOut(child.object)">Check Out</a>
+                  <a class="btn btn-primary" ng-show="prop(child.object,'cmis:baseTypeId')=='cmis:document' && prop(child.object,'cmis:isPrivateWorkingCopy')" ng-click="cancelCheckOut(child.object)">Cancel Check Out</a>
+                  </span>
+                  <a class="btn btn-primary" ng-click="getAllVersions(child.object)">Versions</a>
+                </div>
+              </div>
+
+            </div>
+
+            <div class="row form-grop">
+              <div class="col-sm-4">
+                <select class="form-control" id="includeRelationships" ng-model="returnVersion">
+                  <option selected value="">Return Version:</option>
+                  <option selected value="this">This</option>
+                  <option selected value="latest">Latest</option>
+                  <option selected value="latestmajor">Latest Major</option>
+                </select>
+              </div>
+              <div class="col-sm-4">
+                <label class="form-control">Include ACL
+                  <input type="checkbox" ng-model="options.includeACL">
+                </label>
+              </div>
+              <div class="col-sm-4">
+                <label class="form-control">Include Policy Ids
+                  <input type="checkbox" ng-model="options.includePolicyIds">
+                </label>
+              </div>
+            </div>
+
+
           </div>
 
           <div class="tab-pane" id="info" ng-controller="InfoController">

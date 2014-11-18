@@ -1,21 +1,21 @@
 workbench.factory('cmisSession', ['$q',
-  function($q) {
+  function ($q) {
 
     var defer = $q.defer();
 
     var session = cmis.createSession(wbconfig.url);
 
-    session.setGlobalHandlers(function(data) {
+    session.setGlobalHandlers(function (data) {
       $('#json').JSONView(data.text);
-    }, function(data) {
+    }, function (data) {
       $('#json').JSONView(data);
     });
 
-    session.loadRepositories().ok(function(data) {
+    session.loadRepositories().ok(function (data) {
       defer.resolve(session);
     });
 
-
     return defer.promise;
   }
+
 ]);
