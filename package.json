@@ -2,12 +2,13 @@
   "name": "cmis-web-workbench",
   "version": "0.0.1",
   "description": "",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "author": {
     "name": "Andrea Agili",
     "email": "agea@drwolf.it"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/agea/cmis-web-workbench.git"
   },
   "license": "MIT",
   "devDependencies": {
@@ -17,6 +18,8 @@
     "grunt-contrib-uglify": "~0.6.0",
     "grunt-contrib-cssmin": "~0.10.0",
     "grunt-contrib-concat": "~0.5.0",
+    "grunt-contrib-connect": "~0.5.0",
+    "grunt-connect-proxy": "~0.1.6",
     "grunt-inline": "~0.3.2"
   }
 }

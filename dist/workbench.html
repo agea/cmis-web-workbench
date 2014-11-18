@@ -40,7 +40,7 @@ workbench.controller("QueryController",["$scope","cmisSession",function(e,n){e.q
 workbench.controller("InfoController",["$scope","cmisSession",function(n,e){n.getRepositoryInfo=function(){n.prepare(),e.then(function(e){e.getRepositoryInfo(n.options).ok(wbconfig.ok)})},n.getContentChanges=function(){n.prepare(),e.then(function(e){e.getContentChanges(n.changeLogToken,n.includeProperties,n.includePolicyIds,n.includeACL,n.options).ok(wbconfig.ok)})},n.getCheckedOutDocs=function(){n.prepare(),e.then(function(e){e.getCheckedOutDocs(n.objectID,n.options).ok(wbconfig.ok)})},n.getTypeChildren=function(){n.prepare(),e.then(function(e){e.getTypeChildren(n.typeID,n.includePropertyDefinitions,n.options).ok(wbconfig.ok)})},n.getTypeDefinition=function(){n.prepare(),e.then(function(e){e.getTypeDefinition(n.typeID,n.options).ok(wbconfig.ok)})},n.getTypeDescendants=function(){n.prepare(),e.then(function(e){e.getTypeDescendants(n.typeID,n.depth||0,n.includePropertyDefinitions,n.options).ok(wbconfig.ok)})}}]);
 </script>
   <script>
-workbench.controller("BrowserController",["$scope","cmisSession",function(o,e){o.children={},e.then(function(e){o.object={succinctProperties:{"cmis:path":"/","cmis:objectId":e.defaultRepository.rootFolderId}}}),o.goToParent=function(){o.prepare(),e.then(function(e){e.getFolderParent(o.prop(o.object,"cmis:objectId"),o.options).$ok(o,function(e){o.object=e,o.getChildren()})})},o.goto=function(e){o.object=e,o.getChildren()},o.prop=function(o,e){return o?o.properties?o.properties[e].value:o.succinctProperties[e]:e},o.getObject=function(t){o.prepare(),e.then(function(e){e.getObject(o.prop(t,"cmis:objectId",void 0,o.options)).ok(wbconfig.ok)})},o.getChildren=function(){o.prepare(),e.then(function(e){e.getChildren(o.prop(o.object,"cmis:objectId"),o.options).$ok(o,function(e){o.children=e,wbconfig.ok(e)})})}}]);
+workbench.controller("BrowserController",["$scope","cmisSession",function(o,n){o.children={},o.returnVersion="",n.then(function(n){o.object={succinctProperties:{"cmis:path":"/","cmis:objectId":n.defaultRepository.rootFolderId}}}),o.goToParent=function(){o.prepare(),n.then(function(n){n.getFolderParent(o.prop(o.object,"cmis:objectId"),o.options).$ok(o,function(n){o.object=n,o.getChildren()})})},o.goto=function(n){o.object=n,o.getChildren()},o.prop=function(o,n){return o?o.properties?o.properties[n].value:o.succinctProperties[n]:n},o.getObject=function(e){o.prepare(),n.then(function(n){n.getObject(o.prop(e,"cmis:objectId"),o.returnVersion,o.options).ok(wbconfig.ok)})},o.getACL=function(e){o.prepare(),n.then(function(n){n.getACL(o.prop(e,"cmis:objectId"),o.onlyBasicPermissions,o.options).ok(wbconfig.ok)})},o.getAllVersions=function(e){o.prepare(),n.then(function(n){n.getAllVersions(o.prop(e,"cmis:objectId"),o.options).ok(wbconfig.ok)})},o.getChildren=function(){o.prepare(),n.then(function(n){n.getChildren(o.prop(o.object,"cmis:objectId"),o.options).$ok(o,function(n){o.children=n,wbconfig.ok(n)})})},o.getFolderTree=function(){o.prepare(),n.then(function(n){n.getFolderTree(o.prop(o.object,"cmis:objectId"),o.options.depth,o.options).$ok(o,function(n){o.children=n,wbconfig.ok(n)})})},o.checkOut=function(e){o.prepare(),n.then(function(n){n.checkOut(o.prop(e,"cmis:objectId"),o.options).$ok(o,function(n){o.children=n,wbconfig.ok(n)})})},o.cancelCheckOut=function(e){o.prepare(),n.then(function(n){n.cancelCheckOut(o.prop(e,"cmis:objectId"),o.options).$ok(o,function(n){o.children=n,wbconfig.ok(n)})})},o.getDescendants=function(){o.prepare(),n.then(function(n){n.getDescendants(o.prop(o.object,"cmis:objectId"),o.options.depth,o.options).$ok(o,function(n){o.children=n,wbconfig.ok(n)})})},n.then(function(n){o.contentURL=function(e){return n.getContentStreamURL(o.prop(e,"cmis:objectId"))}})}]);
 </script>
   <style>
 @charset "UTF-8";.jsonview{font-family:monospace;font-size:1.1em;white-space:pre-wrap}.jsonview .prop{font-weight:700}.jsonview .null{color:red}.jsonview .bool{color:#00f}.jsonview .num{color:#00f}.jsonview .string{color:green;white-space:pre-wrap}.jsonview .string.multiline{display:inline-block;vertical-align:text-top}.jsonview .collapser{position:absolute;left:-1em;cursor:pointer}.jsonview .collapsible{transition:height 1.2s;transition:width 1.2s}.jsonview .collapsible.collapsed{height:.8em;width:1em;display:inline-block;overflow:hidden;margin:0}.jsonview .collapsible.collapsed:before{content:"…";width:1em;margin-left:.2em}.jsonview .collapser.collapsed{transform:rotate(0deg)}.jsonview .q{display:inline-block;width:0;color:transparent}.jsonview li{position:relative}.jsonview ul{list-style:none;margin:0 0 0 2em;padding:0}.jsonview h1{font-size:1.2em}
@@ -144,43 +144,100 @@ workbench.controller("BrowserController",["$scope","cmisSession",function(o,e){o
           </div>
 
           <div class="tab-pane" id="browse" ng-controller="BrowserController">
-
-            <div class="breadcrumb">{{prop(object,'cmis:path')}}</div>
-
-            <div class="btn-group form-group">
-              <a class="btn btn-primary" ng-click="goToParent()"> Parent </a>
-              <a class="btn btn-primary" ng-click="getChildren()">Children</a>
-              <a class="btn btn-primary" ng-click="getObject(object)">Properties</a>
-            </div>
-            <div class="form-group">
-              filter, orderBy, renditionFilter, includeAllowableActions, includeRelationships, includePathSegment
-              <input type="text" ng-model="options.filter" placeholder="Filter">
-              <input type="text" ng-model="options.orderBy" placeholder="Order By">
-              <input type="text" ng-model="options.renditionFilter" placeholder="Rendition Filter">
-              <label>Include Allowable Actions
-                <input type="checkbox" ng-model="options.inclideAllowableActions">
-              </label>
-              <select class="form-control" id="includeRelationships" ng-model="options.includeRelationships">
-                <option selected value="">Include Relationships:</option>
-                <option selected value="source">Source</option>
-                <option selected value="target">Target</option>
-                <option selected value="both">Both</option>
-              </select>
-              <label>Include Path Segment
-                <input type="checkbox" ng-model="options.inclidePathSegments">
-              </label>
+            <div class="row form-group">
+              <div class="col-sm-6">
+                <div class="breadcrumb">{{prop(object,'cmis:path')}}</div>
+              </div>
+              <div class="col-sm-6">
+                <div class="input-group">
+                  <div class="input-group-btn">
+                    <a class="btn btn-primary" ng-click="goToParent()"> Parent </a>
+                    <a class="btn btn-primary" ng-click="getObject(object)">Object</a>
+                    <a class="btn btn-primary" ng-click="getChildren()">Children</a>
+                    <a class="btn btn-primary" ng-click="getFolderTree(object)">Folder Tree</a>
+                    <a class="btn btn-primary" ng-click="getDescendants(object)">Descendants</a>
+                  </div>
+                  <input type="number" class="form-control" ng-model="options.depth" placeholder="Depth">
+                </div>
+              </div>
             </div>
 
-            <ul>
-              <li ng-repeat="child in children.objects">
-                <a ng-show="{{prop(child.object,'cmis:baseTypeId')=='cmis:folder'}}" href="javascript:void(0)" ng-click="goto(child.object)">
-                  {{prop(child.object,'cmis:name')}}
-                </a>
-                <span ng-show="{{prop(child.object,'cmis:baseTypeId')!='cmis:folder'}}">
-                  {{prop(child.object,'cmis:name')}}
-                </span>
-              </li>
-            </ul>
+            <div class="row form-group">
+              <div class="col-sm-4">
+                <input type="text" ng-model="options.filter" class="form-control" placeholder="Filter">
+              </div>
+              <div class="col-sm-4">
+                <input type="text" ng-model="options.orderBy" class="form-control" placeholder="Order By">
+              </div>
+              <div class="col-sm-4">
+                <input type="text" ng-model="options.renditionFilter" class="form-control" placeholder="Rendition Filter">
+              </div>
+            </div>
+            <div class="row form-group">
+              <div class="col-sm-4">
+                <label class="form-control">Include Allowable Actions
+                  <input type="checkbox" ng-model="options.includeAllowableActions">
+                </label>
+              </div>
+              <div class="col-sm-4">
+                <select class="form-control" id="includeRelationships" ng-model="options.includeRelationships">
+                  <option selected value="">Include Relationships:</option>
+                  <option selected value="source">Source</option>
+                  <option selected value="target">Target</option>
+                  <option selected value="both">Both</option>
+                </select>
+              </div>
+              <div class="col-sm-4">
+                <label class="form-control">Include Path Segment
+                  <input type="checkbox" ng-model="options.includePathSegments">
+                </label>
+              </div>
+            </div>
+            <div class="row" ng-repeat="child in children.objects">
+              <div class="col-sm-6">
+                <div class="breadcrumb">{{prop(child.object,'cmis:name')}}</div>
+              </div>
+              <div class="col-sm-6">
+                <div class="btn-group form-group">
+                  <a class="btn btn-primary" ng-click="getObject(child.object)">Object</a>
+
+                  <a ng-show="{{prop(child.object,'cmis:baseTypeId')=='cmis:folder'}}" class="btn btn-primary" ng-click="goto(child.object)">
+                    Children
+                  </a>
+                  <a ng-show="{{prop(child.object,'cmis:baseTypeId')=='cmis:document'}}" target="_blank" href="{{contentURL(child.object)}}" class="btn btn-primary">
+                    Content
+                  </a>
+                  <a class="btn btn-primary" ng-show="prop(child.object,'cmis:baseTypeId')=='cmis:document' && prop(child.object,'cmis:versionSeriesCheckedOutId')==null" ng-click="checkOut(child.object)">Check Out</a>
+                  <a class="btn btn-primary" ng-show="prop(child.object,'cmis:baseTypeId')=='cmis:document' && prop(child.object,'cmis:isPrivateWorkingCopy')" ng-click="cancelCheckOut(child.object)">Cancel Check Out</a>
+                  </span>
+                  <a class="btn btn-primary" ng-click="getAllVersions(child.object)">Versions</a>
+                </div>
+              </div>
+
+            </div>
+
+            <div class="row form-grop">
+              <div class="col-sm-4">
+                <select class="form-control" id="includeRelationships" ng-model="returnVersion">
+                  <option selected value="">Return Version:</option>
+                  <option selected value="this">This</option>
+                  <option selected value="latest">Latest</option>
+                  <option selected value="latestmajor">Latest Major</option>
+                </select>
+              </div>
+              <div class="col-sm-4">
+                <label class="form-control">Include ACL
+                  <input type="checkbox" ng-model="options.includeACL">
+                </label>
+              </div>
+              <div class="col-sm-4">
+                <label class="form-control">Include Policy Ids
+                  <input type="checkbox" ng-model="options.includePolicyIds">
+                </label>
+              </div>
+            </div>
+
+
           </div>
 
           <div class="tab-pane" id="info" ng-controller="InfoController">
