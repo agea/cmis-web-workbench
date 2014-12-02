@@ -5,7 +5,11 @@
   <script src="app/bower_components/jquery-jsonview/dist/jquery.jsonview.js"></script>
   <script src="app/bower_components/superagent/superagent.js"></script>
   <script src="app/bower_components/cmis/lib/cmis.js"></script>
+  <script src="app/bower_components/codemirror/lib/codemirror.js"></script>
+  <script src="app/bower_components/codemirror/mode/sql/sql.js"></script>
   <script src="app/bower_components/angularjs/angular.min.js"></script>
+  <script src="app/bower_components/angular-local-storage/dist/angular-local-storage.min.js"></script>
+  <script src="app/bower_components/angular-ui-codemirror/ui-codemirror.min.js"></script>
   <script src="app/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
   <script src="js/workbench.js"></script>
   <script src="js/services/cmisSession.js"></script>
@@ -13,18 +17,70 @@
   <script src="js/controllers/QueryController.js"></script>
   <script src="js/controllers/InfoController.js"></script>
   <script src="js/controllers/BrowserController.js"></script>
+  <link href="app/bower_components/codemirror/lib/codemirror.css" rel='stylesheet' type='text/css'>
   <link href="app/bower_components/jquery-jsonview/dist/jquery.jsonview.css" rel='stylesheet' type='text/css'>
   <link href="app/bower_components/bootstrap/dist/css/bootstrap.min.css" rel='stylesheet' type='text/css'>
   <link href="app/bower_components/bootstrap/dist/css/bootstrap-theme.min.css" rel='stylesheet' type='text/css'>
+  <style type="text/css">
+    .Codemirror {
+      height: 10em;
+      border-top: 1px solid #ccc;
+      border-bottom: 1px solid #ccc;
+    }
+  </style>
 </head>
 
 <body ng-app="workbench" ng-controller="MainController">
+
+  <div class="modal fade" id="loginModal" tabindex="-2" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Login</h4>
+        </div>
+        <div class="modal-body">
+          <form class="form-horizontal">
+            <div class="form-group">
+              <label class="control-label col-sm-2">Username</label>
+              <div class="col-sm-10">
+                <input class="form-control" type="text" ng-model="username">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="control-label col-sm-2">Password</label>
+              <div class="col-sm-10">
+                <input class="form-control" type="password" ng-model="password">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="control-label col-sm-2">URL</label>
+              <div class="col-sm-10">
+                <input class="form-control" type="text" ng-model="url">
+              </div>
+            </div>
+
+
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary btn-block" ng-click="login()" data-dismiss="modal">
+            Login
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 
   <nav class="navbar navbar-default">
     <div class="container">
 
       <div class="navbar-header">
-        <span class="navbar-brand">CMIS Web Workbench</span>
+        <span class="navbar-brand">
+          <a data-toggle="modal" data-target="#loginModal" href="javascript:void(0)">
+            CMIS Web Workbench
+          </a>
+        </span>
       </div>
       <ul class="nav navbar-nav" role="tablist">
         <li class="active">
@@ -57,16 +113,44 @@
     </div>
   </nav>
 
-
   <div class="container">
     <div class="row">
       <div class="col-md-12">
         <div class="tab-content">
           <div class="tab-pane active" id="query" ng-controller="QueryController">
+            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+
+                    <button type="button" class="btn btn-default pull-right" ng-disabled="hi<=1" ng-click="hi = hi-1">
+                      &rarr;
+                    </button>
+                    <button type="button" class="btn btn-default pull-right" ng-disabled="history.length-hi<=0" ng-click="hi = hi+1">
+                      &larr;
+                    </button>
+
+                    <h4 class="modal-title" id="myModalLabel">Query History</h4>
+                  </div>
+                  <div class="modal-body">
+                    {{history[history.length-hi]}}
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">
+                      Close
+                    </button>
+                    <button type="button" class="btn btn-primary" ng-click="query = history[history.length-hi]" data-dismiss="modal">
+                      Select
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <form>
               <div class="row form-group">
                 <div class="col-md-12">
-                  <textarea ng-model="query" class="form-control" rows="{{query.split('\n').length+1}}"></textarea>
+                  <div ui-codemirror="cmOptions" ng-model="query"></div>
                 </div>
               </div>
               <div class="row form-group">
@@ -92,8 +176,13 @@
                 </div>
               </div>
               <div class="row">
-                <div class="col-md-12">
+                <div class="col-md-10">
                   <button class="btn btn-primary btn-block" ng-click="runQuery()">Run Query</button>
+                </div>
+                <div class="col-md-2">
+                  <button type="button" class="btn btn-primary btn-block" data-toggle="modal" data-target="#myModal" ng-click="hi=1">
+                    Query History
+                  </button>
                 </div>
               </div>
             </form>
@@ -283,6 +372,9 @@
       </div>
     </div>
   </div>
+
+
+
 </body>
 
 </html>

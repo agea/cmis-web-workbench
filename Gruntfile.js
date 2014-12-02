@@ -43,11 +43,11 @@ module.exports = function (grunt) {
       server: {
         proxies: [
           {
-            context: '/alfresco/api/-default-/public/cmis/versions/1.1/browser',
+            context: '/alfresco/cmisbrowser',
             host: host,
             port: port,
             rewrite: {
-              '^/alfresco/api/-default-/public/cmis/versions/1.1/browser': path
+              '^/alfresco/cmisbrowser': path
             },
             changeOrigin: true
           }
@@ -92,7 +92,7 @@ module.exports = function (grunt) {
         options: {
           tag: '',
           cssmin: true,
-          uglify: true
+          uglify: false
         },
         src: ['index.html'],
         dest: ['dist/workbench.html']

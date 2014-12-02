@@ -1,8 +1,8 @@
 var wbconfig = wbconfig || {
-  url: '/alfresco/api/-default-/public/cmis/versions/1.1/browser',
+  url: '/cmisbrowser',
   ok: function (data) {
     $('#json').JSONView(data);
   }
 };
 
-var workbench = angular.module('workbench', []);
+var workbench = angular.module('workbench', ['LocalStorageModule', 'ui.codemirror']);

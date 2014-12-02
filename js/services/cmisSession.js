@@ -3,17 +3,24 @@ workbench.factory('cmisSession', ['$q',
 
     var defer = $q.defer();
 
-    var session = cmis.createSession(wbconfig.url);
+    defer.promise.initCmis = function (url, username, password) {
 
-    session.setGlobalHandlers(function (data) {
-      $('#json').JSONView(data.text);
-    }, function (data) {
-      $('#json').JSONView(data);
-    });
+      var session = cmis.createSession(url);
+      session.setGlobalHandlers(function (data) {
+        $('#json').JSONView(data.text);
+      }, function (data) {
+        $('#json').JSONView(data);
+      });
 
-    session.loadRepositories().ok(function (data) {
-      defer.resolve(session);
-    });
+      session
+        .setCredentials(username, password)
+        .loadRepositories()
+        .ok(function (data) {
+          defer.resolve(session);
+        });
+
+    };
+
 
     return defer.promise;
   }
