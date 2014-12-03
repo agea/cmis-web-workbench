@@ -16,6 +16,7 @@ Remote Usage
 -------------------------
 ####You need to install node to connect to a remote server
 
+    $ npm install -g grunt-cli
     $ git clone https://github.com/agea/cmis-web-workbench
     $ cd cmis-web-workbench
     $ npm install
