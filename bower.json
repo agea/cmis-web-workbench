@@ -21,6 +21,8 @@
     "cmis": "~0.1.7",
     "bootstrap": "~3.2.0",
     "jquery-jsonview": "~1.2.0",
-    "angular-local-storage": "~0.1.5"
+    "angular-local-storage": "~0.1.5",
+    "codemirror": "~4.8.0",
+    "angular-ui-codemirror": "~0.1.6"
   }
 }
